@@ -99,10 +99,6 @@ def expand(problem, node):
     return s_dash
 
 
-def str(node):
-    return node.__str__()
-
-
 def best_first_search(problem, eval_function):
     node = problem.initial
     frontier = [node]
