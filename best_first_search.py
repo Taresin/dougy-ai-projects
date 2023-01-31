@@ -5,8 +5,14 @@
 
 import random
 from enum import Enum
+import time
+import os
 
 GAME_SIZE = 5
+
+
+def cls():
+    os.system('clear')
 
 
 class Movement(Enum):
@@ -107,9 +113,12 @@ def best_first_search(problem, eval_function):
         frontier.sort(key=eval_function, reverse=True)
 
         node = frontier.pop()
-        print(node)
+        time.sleep(2)
+        cls()
         problem.grid[node.state.x][node.state.y] = 'X'
         problem.print()
+        print("")
+        print(node)
 
         if problem.is_goal(node):
             return node
