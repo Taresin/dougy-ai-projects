@@ -6,6 +6,8 @@
 import random
 from enum import Enum
 
+GAME_SIZE = 5
+
 
 class Movement(Enum):
     LEFT = 0
@@ -30,11 +32,11 @@ class Node:
         self.actions = []
         if x != 0:
             self.actions.append(Movement.LEFT)
-        if x != 2:
+        if x != GAME_SIZE - 1:
             self.actions.append(Movement.RIGHT)
         if y != 0:
             self.actions.append(Movement.UP)
-        if y != 2:
+        if y != GAME_SIZE - 1:
             self.actions.append(Movement.DOWN)
         self.cost = 0
 
@@ -44,20 +46,20 @@ class Node:
 
 class Game:
     def __init__(self):
-        self.goal = State(random.choice([0, 1, 2]), random.choice([0, 1, 2]))
+        coord_range = range(0, GAME_SIZE, 1)
+        self.goal = State(random.choice(coord_range), random.choice(coord_range))
         # self.goal = State(0, 1)
-        cost_values = [1]
-        self.grid = [
-            random.choices(cost_values, k=3),
-            random.choices(cost_values, k=3),
-            random.choices(cost_values, k=3)
-        ]
-        self.grid[self.goal.x][self.goal.y] = 0
+        cost_values = ["1"]
+        self.grid = []
+        for i in range(0, GAME_SIZE, 1):
+            self.grid.append(random.choices(cost_values, k=GAME_SIZE))
+        self.grid[self.goal.x][self.goal.y] = "0"
         self.initial = Node(0, 0)
 
     def print(self):
         for row in self.grid:
-            print(f'{row[0]} | {row[1]} | {row[2]}')
+            print(f'{" | ".join(row)}')
+            # print(f'{row[0]} | {row[1]} | {row[2]}')
         print("\n")
 
     def is_goal(self, node):
@@ -84,7 +86,7 @@ def expand(problem, node):
                     s_dash.append(n)
             case Movement.RIGHT:
                 n = Node(node.state.x + 1, node.state.y)
-                if node.state.x + 1 <= 2:
+                if node.state.x + 1 < GAME_SIZE:
                     s_dash.append(n)
             case Movement.UP:
                 n = Node(node.state.x, node.state.y - 1)
@@ -92,7 +94,7 @@ def expand(problem, node):
                     s_dash.append(n)
             case Movement.DOWN:
                 n = Node(node.state.x, node.state.y + 1)
-                if node.state.y + 1 <= 2:
+                if node.state.y + 1 < GAME_SIZE:
                     s_dash.append(n)
     return s_dash
 
