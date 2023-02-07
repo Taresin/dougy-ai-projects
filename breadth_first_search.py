@@ -1,14 +1,14 @@
-# The game is this.
-# You are given a grid of values.
-# initial is the starting coordinate with a value of 0
-# Find the shortest ascending path
+# BFS is one algorithm to find a solution to problems that are uninformed search.
+# Best first search is good when you can tell how far you are from the goal.
+# Some problems do not have this luxury so this algorithm gradually expands out the search
 
 import random
 from enum import Enum
 import time
 import os
 
-GAME_SIZE = 5
+GAME_SIZE = 6
+DISPLAY_INTERVAL = 0.5
 
 
 def cls():
@@ -36,13 +36,13 @@ class Node:
         self.state = State(x, y)
         self.parent = None
         self.actions = []
-        if x != 0:
+        if x > 0:
             self.actions.append(Movement.LEFT)
-        if x != GAME_SIZE - 1:
+        if x < GAME_SIZE - 1:
             self.actions.append(Movement.RIGHT)
-        if y != 0:
+        if y > 0:
             self.actions.append(Movement.UP)
-        if y != GAME_SIZE - 1:
+        if y < GAME_SIZE - 1:
             self.actions.append(Movement.DOWN)
         self.cost = 0
 
@@ -71,16 +71,9 @@ class Game:
     def is_goal(self, node):
         return node.state.x == self.goal.x and node.state.y == self.goal.y
 
-
 cls()
 game = Game()
 game.print()
-
-
-def eval_function(node):
-    x_diff = game.goal.x - node.state.x
-    y_diff = game.goal.y - node.state.y
-    return abs(x_diff) + abs(y_diff)
 
 
 def expand(problem, node):
@@ -106,33 +99,28 @@ def expand(problem, node):
     return s_dash
 
 
-def best_first_search(problem, eval_function):
+def breadth_first_search(problem):
     node = problem.initial
+    if problem.is_goal(node):
+        return node
     frontier = [node]
-    reached = {node.state: node}
+    reached = {node.state.__str__()}
     while frontier.__len__() != 0:
-        frontier.sort(key=eval_function, reverse=True)
-
-        node = frontier.pop()
-        time.sleep(1)
+        time.sleep(DISPLAY_INTERVAL)
         cls()
-        problem.grid[node.state.x][node.state.y] = 'X'
+        node = frontier.pop(0)
+        problem.grid[node.state.x][node.state.y] = "X"
         problem.print()
-        print("")
         print(node)
-
         if problem.is_goal(node):
-            return node
-
-        results = expand(problem, node)
-        for child in results:
-            key = child.state.__str__()
-            if key not in reached.keys():
-                reached[key] = child
+            return child
+        for child in expand(problem, node):
+            s = child.state
+            if s.__str__() not in reached:
+                reached.add(s.__str__())
                 frontier.append(child)
-
     return None
 
 
-node = best_first_search(game, eval_function)
+node = breadth_first_search(game)
 print(f'\n\nThe goal node is found here\n{node}\n')
