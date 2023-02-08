@@ -8,7 +8,7 @@ import time
 import os
 
 GAME_SIZE = 6
-DISPLAY_INTERVAL = 0.5
+DISPLAY_INTERVAL = 0.3
 
 
 def cls():

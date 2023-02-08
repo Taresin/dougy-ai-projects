@@ -46,7 +46,7 @@ def depth_first_search(starting_node):
         node = frontier.pop()
         # print(f"Node {count}:")
         print(node.display_string(count))
-        time.sleep(1)
+        time.sleep(0.5)
 
         if node.is_goal:
             print(f'Searched through {count} of {Node.node_count} nodes.')
