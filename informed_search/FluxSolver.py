@@ -1,7 +1,6 @@
 # Model
 # Generate Grid
 
-import random
 import numpy as np
 from copy import deepcopy
 
@@ -26,28 +25,6 @@ COL_COUNT = initial_shape[1]
 
 class WorldState:
     def __init__(self, array=None, cluster_history=[]):
-        # # Start with the problem
-        # self.state = np.int_(np.array([
-        #     [1, 1, 1, 2, 2, 2, 1, 1, 2],
-        #     [1, 2, 2, 2, 2, 2, 1, 1, 2],
-        #     [1, 1, 1, 2, 1, 1, 2, 2, 2],
-        #     [1, 1, 2, 2, 2, 1, 2, 1, 2],
-        #     [2, 2, 2, 2, 1, 2, 2, 2, 1],
-        #     [2, 1, 1, 2, 2, 1, 1, 2, 1],
-        # ]))
-        #
-        # # We want to set it so that the bottom left coordinate is 0, 0
-        # self.state = np.flipud(self.state)
-        #
-        # self.state = np.int_(np.array([
-        #     [0, 1, 1, 2, 2, 2, 0, 1, 0],
-        #     [0, 2, 0, 0, 0, 2, 0, 1, 2],
-        #     [1, 1, 1, 2, 1, 0, 0, 2, 2],
-        #     [1, 1, 2, 2, 2, 1, 0, 1, 2],
-        #     [1, 2, 2, 2, 1, 2, 0, 2, 1],
-        #     [2, 1, 1, 2, 2, 1, 0, 0, 1],
-        # ]))
-
         self.cluster_history = cluster_history
         if array is None:
             self.grid = np.int_(np.array([
@@ -160,17 +137,6 @@ def get_cluster(state, row, col, value, reached):
     return reached
 
 
-def get_next_state(state, cluster):
-    return 4
-
-
-# x = get_cluster(world.state, 0, 0, 1, set())
-# print(x)
-
-
-# print({Coordinate(0, 0), Coordinate(0, 0)})
-
-
 class Node:
     def __init__(self, state, parent_node, parent_cluster):
         self.state = state
@@ -204,44 +170,8 @@ class Node:
         return list(node_map)
 
 
-class Action:
-    def __init__(self, state, cluster):
-        self.state = state
-        self.cluster = cluster
-
-
-#
-# class World:
-#     def __init__(self, size_row, size_col):
-#         self.size_row = size_row
-#         self.size_col = size_col
-#         self.state = [[0] * size_col for i in range(size_row)]
-#         self.points = []
-#         for col in range(size_col):
-#             for row in range(size_row):
-#                 value = random.choices([0, 1], weights=[6, 4], k=1)[0]
-#                 self.state[row][col] = value
-#                 if value == 1:
-#                     self.points.append(Node(row, col, 2))
-#
-#         # print(self.grid)
-#
-#     def print(self):
-#         for row in self.state:
-#             print(f'{" | ".join(map(str, row))}')
-#         print("\n")
-#
-#
-# world = World(2, 2)
-
-
-def eval_function(cluster):
-    return cluster.__len__() ** 2
-
-
 # Search for the shortest path to empty
 def greedy_best_first_search(node):
-    current_node = node
     frontier = [node]
 
     while len(frontier) != 0:
@@ -260,7 +190,6 @@ def greedy_best_first_search(node):
 initial_state = WorldState(array=initial_state)
 root = Node(initial_state, None, {})
 result_node = greedy_best_first_search(root)
-# print(result_node.state.grid)
 
 # Print answer
 current_node = result_node
@@ -275,11 +204,3 @@ for node in path:
     print(f'Step {count}')
     print(np.flipud(node.state.grid))
     print()
-
-# clusters = get_clusters(initial_state.state)
-# print(initial_state.state)
-# print(clusters)
-# initial_state.pop(clusters[0])
-# print(initial_state.state)
-
-# print(initial_state.next_state(clusters[1]).state)
