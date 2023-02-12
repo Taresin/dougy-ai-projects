@@ -24,8 +24,7 @@ COL_COUNT = initial_shape[1]
 
 
 class WorldState:
-    def __init__(self, array=None, cluster_history=[]):
-        self.cluster_history = cluster_history
+    def __init__(self, array=None):
         if array is None:
             self.grid = np.int_(np.array([
                 [1, 1, 1],
@@ -63,7 +62,7 @@ class WorldState:
 
     def next_state(self, cluster):
         array = deepcopy(self.grid)
-        new_state = WorldState(array, cluster_history=[*self.cluster_history, cluster])
+        new_state = WorldState(array)
         new_state.pop(cluster)
         return new_state
 
