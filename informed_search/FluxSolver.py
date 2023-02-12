@@ -18,6 +18,7 @@ initial_state = np.int_(np.array([
     [2, 2, 2, 2, 1, 2, 2, 2, 1],
     [2, 1, 1, 2, 2, 1, 1, 2, 1],
 ]))
+initial_state = np.flipud(initial_state)
 initial_shape = np.shape(initial_state)
 ROW_COUNT = initial_shape[0]
 COL_COUNT = initial_shape[1]
@@ -272,7 +273,7 @@ count = 0
 for node in path:
     count += 1
     print(f'Step {count}')
-    print(node.state.grid)
+    print(np.flipud(node.state.grid))
     print()
 
 # clusters = get_clusters(initial_state.state)
