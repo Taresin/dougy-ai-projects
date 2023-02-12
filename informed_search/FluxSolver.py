@@ -9,8 +9,18 @@ from copy import deepcopy
 # Find all clusters
 
 # Goal Formulation
-ROW_COUNT = 2
-COL_COUNT = 3
+
+initial_state = np.int_(np.array([
+    [1, 1, 1, 2, 2, 2, 1, 1, 2],
+    [1, 2, 2, 2, 2, 2, 1, 1, 2],
+    [1, 1, 1, 2, 1, 1, 2, 2, 2],
+    [1, 1, 2, 2, 2, 1, 2, 1, 2],
+    [2, 2, 2, 2, 1, 2, 2, 2, 1],
+    [2, 1, 1, 2, 2, 1, 1, 2, 1],
+]))
+initial_shape = np.shape(initial_state)
+ROW_COUNT = initial_shape[0]
+COL_COUNT = initial_shape[1]
 
 
 class WorldState:
@@ -45,7 +55,7 @@ class WorldState:
             ]))
         else:
             self.grid = array
-        self.bubble_up()
+        self.run_simulator()
         self.cluster_count = len(get_clusters(self.grid))
 
     def bubble_up(self):
@@ -57,10 +67,21 @@ class WorldState:
             self.grid = np.delete(self.grid, c, 1)
             self.grid = np.insert(self.grid, c, sorted, 1)
 
+    def clear_empty_cols(self):
+        idx = np.argwhere(np.all(self.grid[..., :] == 0, axis=0))
+        column_count = len(idx)
+        zeros = np.zeros((ROW_COUNT, column_count), dtype=int)
+        self.grid = np.delete(self.grid, idx, axis=1)
+        self.grid = np.append(self.grid, zeros, axis=1)
+
+    def run_simulator(self):
+        self.bubble_up()
+        self.clear_empty_cols()
+
     def pop(self, cluster):
         for node in cluster:
             self.grid[node.row][node.col] = 0
-        self.bubble_up()
+        self.run_simulator()
 
     def next_state(self, cluster):
         array = deepcopy(self.grid)
@@ -235,7 +256,7 @@ def greedy_best_first_search(node):
     return None
 
 
-initial_state = WorldState()
+initial_state = WorldState(array=initial_state)
 root = Node(initial_state, None, {})
 result_node = greedy_best_first_search(root)
 # print(result_node.state.grid)
