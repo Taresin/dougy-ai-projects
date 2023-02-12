@@ -33,7 +33,8 @@ class WorldState:
         else:
             self.grid = array
         self.run_simulator()
-        self.cluster_count = len(get_clusters(self.grid))
+        self.clusters = get_clusters(self.grid)
+        self.cluster_count = len(self.clusters)
 
     def bubble_up(self):
         for c in range(0, COL_COUNT):
@@ -166,7 +167,7 @@ class Node:
         return self_clusters == other_clusters
 
     def expand(self):
-        clusters = get_clusters(self.state.grid)
+        clusters = self.state.clusters
         node_map = map(lambda cluster: Node(self.state.next_state(cluster), self, cluster),
                        clusters)
         return list(node_map)
