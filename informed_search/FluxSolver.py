@@ -10,12 +10,12 @@ from copy import deepcopy
 # Goal Formulation
 
 initial_state = np.int_(np.array([
-    [1, 1, 1, 2, 2, 2, 1, 1, 2],
-    [1, 2, 2, 2, 2, 2, 1, 1, 2],
-    [1, 1, 1, 2, 1, 1, 2, 2, 2],
-    [1, 1, 2, 2, 2, 1, 2, 1, 2],
-    [2, 2, 2, 2, 1, 2, 2, 2, 1],
-    [2, 1, 1, 2, 2, 1, 1, 2, 1],
+    [1, 1, 2, 1, 2, 2, 2, 2, 1],
+    [1, 1, 2, 1, 1, 2, 2, 1, 1],
+    [2, 2, 1, 2, 1, 1, 2, 2, 1],
+    [2, 2, 2, 1, 1, 1, 2, 1, 2],
+    [2, 1, 1, 1, 1, 2, 1, 1, 1],
+    [2, 1, 2, 2, 2, 1, 2, 2, 1],
 ]))
 initial_state = np.flipud(initial_state)
 initial_shape = np.shape(initial_state)
@@ -98,6 +98,9 @@ class Coordinate:
 
     def __eq__(self, other):
         return self.row == other.row and self.col == other.col
+
+    def __lt__(self, other):
+        return self.row < other.row or (self.row == other.row and self.col < other.col)
 
     def __str__(self):
         return f'({self.row}, {self.col})'
@@ -201,5 +204,9 @@ count = 0
 for node in path:
     count += 1
     print(f'Step {count}')
+    print(f'Cluster:')
+    cluster = list(node.parent_cluster)
+    cluster.sort()
+    print(cluster)
     print(np.flipud(node.state.grid))
     print()
