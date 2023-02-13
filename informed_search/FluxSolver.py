@@ -11,12 +11,12 @@ import itertools
 # Goal Formulation
 
 initial_state = np.int_(np.array([
-    [1, 1, 2, 1, 2, 2, 2, 2, 1],
-    [1, 1, 2, 1, 1, 2, 2, 1, 1],
-    [2, 2, 1, 2, 1, 1, 2, 2, 1],
-    [2, 2, 2, 1, 1, 1, 2, 1, 2],
-    [2, 1, 1, 1, 1, 2, 1, 1, 1],
-    [2, 1, 2, 2, 2, 1, 2, 2, 1],
+    [1, 2, 1, 2, 1, 1, 1, 2, 2],
+    [1, 2, 2, 1, 2, 2, 1, 2, 1],
+    [2, 1, 2, 1, 1, 2, 1, 2, 1],
+    [2, 1, 1, 2, 2, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [2, 2, 2, 1, 2, 1, 1, 2, 1],
 ]))
 initial_state = np.flipud(initial_state)
 initial_shape = np.shape(initial_state)
@@ -152,11 +152,6 @@ class Node:
         self_clusters = self.state.zero_count()
         other_clusters = other.state.zero_count()
         return self_clusters > other_clusters
-
-    # def __eq__(self, other):
-    #     self_clusters = self.state.zero_count()
-    #     other_clusters = other.state.zero_count()
-    #     return self_clusters == other_clusters
 
     def expand(self):
         move_list = self.state.get_moves()
