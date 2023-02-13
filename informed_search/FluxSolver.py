@@ -3,7 +3,6 @@
 
 import numpy as np
 from copy import deepcopy
-import itertools
 
 # Create World State
 # Find all clusters
@@ -11,12 +10,12 @@ import itertools
 # Goal Formulation
 
 initial_state = np.int_(np.array([
-    [1, 2, 1, 2, 1, 1, 1, 2, 2],
-    [1, 2, 2, 1, 2, 2, 1, 2, 1],
-    [2, 1, 2, 1, 1, 2, 1, 2, 1],
-    [2, 1, 1, 2, 2, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [2, 2, 2, 1, 2, 1, 1, 2, 1],
+    [1, 1, 1, 1, 1, 2, 1, 1, 1],
+    [1, 2, 2, 1, 1, 2, 2, 1, 2],
+    [1, 1, 1, 1, 2, 1, 1, 1, 2],
+    [2, 1, 2, 2, 1, 1, 2, 2, 2],
+    [2, 2, 1, 2, 1, 1, 2, 2, 1],
+    [1, 1, 2, 2, 1, 2, 2, 1, 2],
 ]))
 initial_state = np.flipud(initial_state)
 initial_shape = np.shape(initial_state)
