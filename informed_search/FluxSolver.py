@@ -3,6 +3,7 @@
 
 import numpy as np
 from copy import deepcopy
+import itertools
 
 # Create World State
 # Find all clusters
@@ -25,16 +26,11 @@ COL_COUNT = initial_shape[1]
 
 class WorldState:
     def __init__(self, array=None):
-        if array is None:
-            self.grid = np.int_(np.array([
-                [1, 1, 1],
-                [2, 2, 1]
-            ]))
-        else:
-            self.grid = array
+        self.grid = array
         self.run_simulator()
-        self.clusters = get_clusters(self.grid)
-        self.cluster_count = len(self.clusters)
+
+    def get_moves(self):
+        return get_moves(self.grid)
 
     def bubble_up(self):
         for c in range(0, COL_COUNT):
@@ -67,8 +63,11 @@ class WorldState:
         new_state.pop(cluster)
         return new_state
 
+    def zero_count(self):
+        return np.count_nonzero(self.grid == 0)
 
-def get_clusters(grid):
+
+def get_moves(grid):
     state_shape = np.shape(grid)
     rows = state_shape[0]
     cols = state_shape[1]
@@ -80,11 +79,14 @@ def get_clusters(grid):
 
     cluster_list = []
     indices = set(indices)
-    while indices.__len__() > 0:
-        node = list(indices).pop(0)
-        cluster = get_cluster(grid, node.row, node.col, grid[node.row][node.col], set())
-        cluster_list.append(cluster)
-        indices.difference_update(cluster)
+    while len(indices) > 0:
+        coord = indices.pop()
+        value = grid[coord.row][coord.col]
+        if value == 0:
+            continue
+        current_cluster = get_cluster(grid, coord.row, coord.col, value, set())
+        cluster_list.append(current_cluster)
+        indices.difference_update(current_cluster)
 
     return cluster_list
 
@@ -146,46 +148,47 @@ class Node:
         self.parent_node = parent_node
         self.parent_cluster = parent_cluster
 
-    def __cmp__(self, other):
-        self_clusters = self.state.cluster_count
-        other_clusters = other.state.cluster_count
-        if self_clusters < other_clusters:
-            return -1
-        elif self_clusters == other_clusters:
-            return 0
-        else:
-            return 1
-
     def __lt__(self, other):
-        self_clusters = self.state.cluster_count
-        other_clusters = other.state.cluster_count
-        return self_clusters < other_clusters
+        self_clusters = self.state.zero_count()
+        other_clusters = other.state.zero_count()
+        return self_clusters > other_clusters
 
-    def __eq__(self, other):
-        self_clusters = self.state.cluster_count
-        other_clusters = other.state.cluster_count
-        return self_clusters == other_clusters
+    # def __eq__(self, other):
+    #     self_clusters = self.state.zero_count()
+    #     other_clusters = other.state.zero_count()
+    #     return self_clusters == other_clusters
 
     def expand(self):
-        clusters = self.state.clusters
-        node_map = map(lambda cluster: Node(self.state.next_state(cluster), self, cluster),
-                       clusters)
-        return list(node_map)
+        move_list = self.state.get_moves()
+        expansion_list = []
+        for move in move_list:
+            if len(move) <= 1:
+                continue
+            node = Node(self.state.next_state(move), self, move)
+            expansion_list.append(node)
+        return expansion_list
 
 
 # Search for the shortest path to empty
+def valid_moves(node_list):
+    moves = []
+    for node in node_list:
+        if node.state.move_count > 1:
+            moves.append(node)
+    return moves
+
+
 def greedy_best_first_search(node):
     frontier = [node]
 
     while len(frontier) != 0:
         frontier.sort()
         best = frontier.pop(0)
-        expansion = best.expand()
-
+        expansion_nodes = best.expand()
         if not best.state.grid.any():
             return best
 
-        frontier.extend(expansion)
+        frontier.extend(expansion_nodes)
 
     return None
 
@@ -195,6 +198,10 @@ root = Node(initial_state, None, {})
 result_node = greedy_best_first_search(root)
 
 # Print answer
+if result_node is None:
+    print(f'No solution found')
+    exit(0)
+
 current_node = result_node
 path = []
 while current_node is not None:
